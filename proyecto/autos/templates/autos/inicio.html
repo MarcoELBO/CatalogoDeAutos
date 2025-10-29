@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Vukimotors - Inicio{% endblock %}
+
+{% block content %}
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Encuentra el Auto de Tus Sueños</h1>
+            <p>Explora miles de vehículos nuevos y usados de los mejores vendedores.</p>
+            <form class="search-form">
+                <input type="text" placeholder="Busca por marca o modelo...">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </form>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="featured-cars">
+            <h2>Vehículos Destacados</h2>
+            <div class="car-grid">
+                
+                {% for auto in featured_cars %}
+                <div class="car-card">
+                    {% if auto.imagen_auto %}
+                        <img src="{{ auto.imagen_auto.url }}" alt="{{ auto.marca }} {{ auto.modelo }}">
+                    {% else %}
+                        <img src="{% static 'autos/imagenes/placeholder.png' %}" alt="Imagen no disponible">
+                    {% endif %}
+                    
+                    <div class="car-card-content">
+                        <h4>{{ auto.marca }} {{ auto.modelo }}</h4>
+                        <p class="car-year">Año: {{ auto.anio }}</p>
+                        <p>{{ auto.kilometraje|intcomma }} km | {{ auto.estado }}</p>
+                        <p class="car-price">${{ auto.precio|floatformat:2|intcomma }} MXN</p>
+                        <a href="#" class="btn btn-primary btn-block">Ver Detalles</a>
+                    </div>
+                </div>
+                {% empty %}
+                <p>No hay vehículos destacados en este momento.</p>
+                {% endfor %}
+
+            </div>
+        </section>
+    </main>
+
+{% endblock %}

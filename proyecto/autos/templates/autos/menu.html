@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Catálogo - Vukimotors{% endblock %}
+
+
+{% block content %}
+
+<div class="container">
+    <div class="page-content">
+        
+        <aside class="filter-sidebar">
+            <h3>Filtros</h3>
+            
+            <form class="form-group" method="get" action="{% url 'menu' %}">
+                <label for="ordenar">Ordenar por</label>
+                <select name="ordenar" id="ordenar" class="form-control" onchange="this.form.submit()">
+                    <option value="relevantes" {% if orden_actual == 'relevantes' %}selected{% endif %}>Mas Relevantes</option>
+                    <option value="precio_asc" {% if orden_actual == 'precio_asc' %}selected{% endif %}>Precio (Menor a Mayor)</option>
+                    <option value="precio_desc" {% if orden_actual == 'precio_desc' %}selected{% endif %}>Precio (Mayor a Menor)</option>
+                    <option value="ano_desc" {% if orden_actual == 'ano_desc' %}selected{% endif %}>Más Nuevos</option>
+                </select>
+            </form>
+
+            <div class="form-group">
+                <label for="marca">Marca</label>
+                <input type="text" id="marca" name="marca" placeholder="Ej: Toyota">
+            </div>
+            
+            <div class="form-group">
+                <label for="precio_max">Precio Máximo</label>
+                <input type="number" id="precio_max" name="precio_max" placeholder="Ej: 500000">
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block">Aplicar Filtros</button>
+
+        </aside>
+
+        <div class="car-grid-container">
+            <div class="car-grid">
+
+                {% for auto in autos %}
+                <div class="car-card">
+                    {% if auto.imagen_auto %}
+                        <img src="{{ auto.imagen_auto.url }}" alt="{{ auto.marca }} {{ auto.modelo }}">
+                    {% else %}
+                        <img src="{% static 'autos/imagenes/placeholder.png' %}" alt="Imagen no disponible">
+                    {% endif %}
+                    
+                    <div class="car-card-content">
+                        <h4>{{ auto.marca }} {{ auto.modelo }}</h4>
+                        <p class="car-year">Año: {{ auto.anio }}</p>
+                        <p>{{ auto.kilometraje|intcomma }} km | {{ auto.estado }}</p>
+                        <p class="car-price">${{ auto.precio|floatformat:2|intcomma }} MXN</p>
+                        <a href="#" class="btn btn-primary btn-block">Ver Detalles</a>
+                    </div>
+                </div>
+                {% empty %}
+                <p>No se encontraron vehículos que coincidan con tu búsqueda.</p>
+                {% endfor %}
+            </div>
+
+            {% if is_paginated %}
+                <div class="pagination">
+                    <span class="step-links">
+                        {% if page_obj.has_previous %}
+                            <a href="?page=1">&laquo;</a>
+                            <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                        {% endif %}
+
+                        <span class="current">
+                            {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                        </span>
+
+                        {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+                            <a href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a>
+                        {% endif %}
+                    </span>
+                </div>
+            {% endif %}
+
+        </div> </div> </div> {% endblock %}

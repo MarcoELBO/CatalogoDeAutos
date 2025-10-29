@@ -1,0 +1,327 @@
+/* ==============================================
+ Archivo CSS Principal: styles.css
+ Contiene todos los estilos para el sitio.
+==============================================
+*/
+
+/* --- 1. Variables Globales y Estilos Base --- */
+:root {
+    --primary-color: #1DD786;
+    --secondary-color: #6c757d;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+    --background-color: #ffffff;
+    --card-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    --border-radius: 8px;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    background-color: var(--light-color);
+    color: var(--dark-color);
+    line-height: 1.6;
+
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* El body ocupará al menos el 100% de la altura de la pantalla */
+}
+
+main {
+    flex-grow: 1; /* Hace que el <main> crezca y ocupe todo el espacio sobrante */
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* --- 2. Barra de Navegación --- */
+.navbar {
+    background-color: var(--background-color);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-brand {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.navbar-links a {
+    color: var(--dark-color);
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: 400;
+}
+
+/* --- 3. Botones y Formularios --- */
+.btn {
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.btn-secondary:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-block {
+    display: block;
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box; /* Para que el padding no rompa el ancho */
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Importante */
+}
+
+/* --- 4. Sección Hero (Página de Inicio) --- */
+.hero {
+    /* Asegúrate de que tu imagen esté en:
+      catalogo/static/catalogo/imagenes/banner.png 
+    */
+    background: url('imagenes/banner.png');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 100px 20px;
+    text-align: center;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+.search-form {
+    display: flex;
+    justify-content: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.search-form input[type="text"] {
+    width: 100%;
+    padding: 15px;
+    font-size: 1rem;
+    border: none;
+    border-radius: var(--border-radius) 0 0 var(--border-radius);
+}
+
+.search-form button {
+    padding: 15px 30px;
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+}
+
+/* --- 5. Sección Destacados (Página de Inicio) --- */
+.featured-cars {
+    padding: 60px 0;
+    text-align: center;
+}
+
+.featured-cars h2 {
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+}
+
+/* --- 6. Layout Página de Catálogo --- */
+.page-content {
+    display: flex;
+    flex-wrap: wrap; /* Para responsividad en móviles */
+    gap: 30px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+.filter-sidebar {
+    flex: 1 1 250px; /* Crece/encoge, base de 250px */
+    background-color: var(--background-color);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    height: fit-content; /* Se ajusta al contenido */
+}
+
+.filter-sidebar h3 {
+    margin-top: 0;
+    border-bottom: 2px solid var(--light-color);
+    padding-bottom: 10px;
+}
+
+/* --- 7. Grid de Autos y Tarjetas (Usado en Inicio y Catálogo) --- */
+.car-grid-container {
+    flex: 3 1 600px; /* Crece 3x más que el sidebar */
+}
+
+.car-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.car-card {
+    background-color: var(--background-color);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column; /* Para alinear contenido */
+}
+
+.car-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
+.car-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background-color: #eee;
+}
+
+.car-card-content {
+    padding: 20px;
+    flex-grow: 1; /* Empuja el botón al fondo */
+    display: flex;
+    flex-direction: column;
+}
+
+.car-card-content h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.2rem;
+}
+
+.car-card-content p {
+    margin: 5px 0;
+    color: var(--secondary-color);
+}
+
+.car-price {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-top: 15px !important;
+}
+
+/* Asegura que el botón esté al final */
+.car-card-content .btn {
+    margin-top: auto; /* Truco mágico para alinear al fondo */
+    padding-top: 10px;
+}
+
+/* --- 8. Paginación --- */
+.pagination {
+    margin-top: 2rem;
+    padding-bottom: 2rem;
+    text-align: center;
+}
+
+.pagination a, .pagination .current {
+    padding: 8px 12px;
+    margin: 0 3px;
+    text-decoration: none;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: var(--primary-color);
+}
+
+.pagination .current {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.pagination a:hover {
+    background-color: #f0f0f0;
+}
+
+
+/* --- 9. Footer --- */
+.footer {
+  /* --- 1. La distribución (Flexbox) --- */
+  display: flex;
+  justify-content: space-between; /* Empuja los hijos a los extremos */
+  align-items: center;            /* Los centra verticalmente */
+
+  /* --- 2. Estilos de la imagen --- */
+  background-color: #000000;         /* Fondo blanco como en la foto */
+  padding: 25px 70px;             /* Espacio interno (15px arriba/abajo, 25px izq/der) */
+  border-top: 1px solid #000000;     /* Una línea superior sutil (buena práctica) */
+}
+
+/* El párrafo de la izquierda (el copyright) */
+.footer p {
+  margin: 0; /* Quita márgenes por defecto */
+  color: #ffffff; /* Color gris para el texto de copyright */
+  font-size: 0.9rem; /* Un poco más pequeño */
+}
+
+/* El link "Faqs" de la derecha */
+.footer .navbar-links a {
+  /* --- Estilo como "Inicio" en la foto --- */
+  color: #fffdfd;               /* Color de texto oscuro */
+  text-decoration: none;    /* Quita el subrayado */
+  font-weight: 500;         /* Un grosor de letra normal/ligero */
+}
+
+/* (Opcional) Efecto al pasar el mouse sobre "Faqs" */
+.footer .navbar-links a:hover {
+  text-decoration: underline;
+}

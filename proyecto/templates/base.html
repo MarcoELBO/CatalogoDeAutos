@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>{% block title %}Vukimotors{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'autos/css/main.css' %}">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    
+    <nav class="navbar">
+        <div class="container">
+            <a href="{% url 'inicio' %}" class="navbar-brand">Vukimotors</a>
+            <div class="navbar-links">
+                <a href="{% url 'inicio' %}">Inicio</a>
+                
+                <a href="{% url 'menu' %}">Menú</a>
+                
+                <a href="#" class="btn btn-secondary">Iniciar Sesión</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 Vukimotors. Todos los derechos reservados.</p>
+            <div class="navbar-links">
+                 <a href="{% url 'faqs' %}">Faqs</a>
+            </div>
+    </footer>
+</body>
+</html>
