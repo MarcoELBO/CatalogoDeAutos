@@ -1,0 +1,247 @@
+/* static/css/comparar.css */
+
+:root {
+    --bg-color: #f5f7fa;
+    --card-bg: #ffffff;
+    --text-main: #111111;
+    --text-muted: #6c757d;
+    --accent: #1DD786; /* Tu color verde */
+    --border-light: #eef0f3;
+}
+
+body {
+    background-color: var(--bg-color); /* Fondo ligeramente gris para contraste */
+}
+
+.compare-page {
+    padding-bottom: 5rem;
+}
+
+.compare-header-text {
+    text-align: center;
+    padding: 3rem 0 2rem;
+}
+.compare-header-text h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -1px;
+}
+.compare-header-text p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+}
+
+/* --- WRAPPER DE LA TABLA --- */
+.compare-table-wrapper {
+    overflow-x: auto; /* Scroll horizontal en móviles */
+    background: transparent;
+    border-radius: 16px;
+    /* Quitamos el shadow del wrapper para que las columnas sticky funcionen bien visualmente */
+}
+
+.compare-table {
+    width: 100%;
+    border-collapse: separate; /* Necesario para sticky headers */
+    border-spacing: 0;
+    min-width: 800px; /* Asegura que no se aplaste */
+}
+
+/* --- ENCABEZADO STICKY (MAGIA) --- */
+.compare-table thead th {
+    position: sticky;
+    top: 70px; /* Ajusta esto según la altura de tu Navbar */
+    background: rgba(255, 255, 255, 0.95); /* Casi opaco */
+    backdrop-filter: blur(10px); /* Efecto vidrio */
+    z-index: 10;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    padding: 1.5rem 1rem;
+    vertical-align: bottom; /* Alinea el contenido abajo */
+}
+
+/* Primera columna (Labels) vacía en el header */
+.compare-table th.empty-corner {
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    width: 200px;
+}
+
+/* Tarjeta del Auto en el Header */
+.car-card-header {
+    text-align: center;
+    position: relative;
+    padding: 0 10px;
+}
+
+.img-container {
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+.img-container img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* Muestra el auto completo sin recortar */
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); /* Sombra realista al auto */
+    transition: transform 0.3s ease;
+}
+.car-card-header:hover img {
+    transform: scale(1.05);
+}
+
+.car-brand {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin: 0;
+    font-weight: 600;
+}
+.car-model {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin: 0.2rem 0 0.5rem;
+    color: var(--text-main);
+}
+.car-price {
+    font-size: 1.25rem;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+/* Botones */
+.btn-detail {
+    display: block;
+    width: 100%;
+    padding: 0.6rem;
+    background: var(--text-main);
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+.btn-detail:hover {
+    background: #333;
+}
+
+.btn-remove {
+    position: absolute;
+    top: -10px;
+    right: 0;
+    color: #ccc;
+    padding: 5px;
+    transition: color 0.2s;
+}
+.btn-remove:hover {
+    color: #ff4d4d;
+}
+
+/* Placeholder para agregar más autos */
+.placeholder-col {
+    vertical-align: middle !important;
+}
+.add-car-placeholder a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    border: 2px dashed #ddd;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #999;
+    transition: all 0.2s;
+}
+.add-car-placeholder a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(29, 215, 134, 0.05);
+}
+.plus-icon {
+    font-size: 2rem;
+    font-weight: 300;
+    margin-bottom: 0.5rem;
+}
+
+/* --- CUERPO DE LA TABLA --- */
+.compare-table tbody tr {
+    transition: background-color 0.1s;
+}
+.compare-table tbody tr:hover {
+    background-color: rgba(0,0,0,0.01); /* Sutil highlight al pasar el mouse */
+}
+
+.label-row {
+    font-weight: 600;
+    color: var(--text-muted);
+    padding: 1.2rem;
+    border-bottom: 1px solid var(--border-light);
+    background: #fff; /* Fondo blanco para la etiqueta */
+    width: 200px;
+}
+
+.data-row {
+    text-align: center;
+    padding: 1.2rem;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-main);
+    font-size: 1rem;
+    background: #fff;
+}
+
+/* Separadores de Sección */
+.section-divider td {
+    background-color: #f5f7fa;
+    color: var(--text-main);
+    font-weight: 800;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 2rem 1rem 0.5rem; /* Espacio extra arriba */
+    border: none;
+}
+
+/* --- ESTADO VACÍO --- */
+.empty-state-modern {
+    text-align: center;
+    padding: 4rem 1rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+    max-width: 600px;
+    margin: 0 auto;
+}
+.empty-illustration {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+}
+.empty-state-modern h2 {
+    margin-bottom: 0.5rem;
+}
+.empty-state-modern p {
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+}
+.btn-main-action {
+    background-color: var(--accent);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(29, 215, 134, 0.4);
+    transition: transform 0.2s;
+    display: inline-block;
+}
+.btn-main-action:hover {
+    transform: translateY(-2px);
+    background-color: #19c076;
+}

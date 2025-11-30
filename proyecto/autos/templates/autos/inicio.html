@@ -4,14 +4,83 @@
 
 {% block title %}Vukimotors - Inicio{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* ESTILOS ESPECÍFICOS PARA EL INICIO */
+    
+    .featured-layout {
+        display: flex;
+        gap: 20px; 
+        /* CLAVE 1: 'stretch' obliga a que el video mida lo mismo de alto que toda la lista de autos */
+        align-items: stretch; 
+        margin-top: 2rem;
+        position: relative; 
+    }
+
+    /* La lista de autos ocupa el 75% del ancho */
+    .featured-list {
+        flex: 3; 
+        min-width: 0; 
+    }
+
+    /* Contenedor del video (lado derecho) */
+    .featured-media {
+        flex: 1.5; /* CLAVE 2: Más ancho para que luzca como una sección importante */
+        min-width: 300px; 
+        position: relative; 
+    }
+
+    /* Estilo limpio para el video (Kavak style) */
+    .media-clean-wrapper {
+        /* CLAVE 3: Sticky para que te siga mientras ves los autos */
+        position: sticky; 
+        top: 100px; /* Ajuste para el navbar */
+        
+        width: 100%;
+        height: 100%; /* Llena todo el alto disponible */
+        min-height: 500px; /* Altura mínima garantizada para impacto visual */
+        max-height: 800px; /* Límite para pantallas gigantes */
+        
+        border-radius: 12px; 
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+        background-color: #f3f3f3; 
+    }
+
+    /* El video cubre todo el espacio */
+    .media-clean-wrapper video {
+        width: 100%;
+        height: 100%;
+        /* CLAVE 4: 'cover' hace que el video llene el cuadro sin bordes negros (zoom automático) */
+        object-fit: cover; 
+        display: block;
+    }
+
+    /* En celulares, el video pasa arriba */
+    @media (max-width: 992px) {
+        .featured-layout {
+            flex-direction: column-reverse; 
+        }
+        .featured-media {
+            width: 100%;
+            height: 300px; /* Altura fija en móvil */
+            position: relative;
+            top: 0;
+            margin-bottom: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 
     <header class="hero">
         <div class="hero-content">
             <h1>Encuentra el Auto de Tus Sueños</h1>
             <p>Explora miles de vehículos nuevos y usados de los mejores vendedores.</p>
-            <form class="search-form">
-                <input type="text" placeholder="Busca por marca o modelo...">
+            
+            <form class="search-form" action="{% url 'menu' %}" method="get">
+                <input type="text" name="q" placeholder="Busca por marca o modelo (ej. Ford Ranger)..." required>
                 <button type="submit" class="btn btn-primary">Buscar</button>
             </form>
         </div>
@@ -19,31 +88,87 @@
 
     <main class="container">
         <section class="featured-cars">
-            <h2>Vehículos Destacados</h2>
-            <div class="car-grid">
+            <h2 style="margin-bottom: 10px;">Vehículos Destacados</h2>
+            <p style="color: #666; margin-bottom: 20px;">Las mejores ofertas de la semana seleccionadas para ti.</p>
+            
+            <div class="featured-layout">
                 
-                {% for auto in featured_cars %}
-                <div class="car-card">
-                    {% if auto.imagen_auto %}
-                        <img src="{{ auto.imagen_auto.url }}" alt="{{ auto.marca }} {{ auto.modelo }}">
-                    {% else %}
-                        <img src="{% static 'autos/imagenes/placeholder.png' %}" alt="Imagen no disponible">
-                    {% endif %}
-                    
-                    <div class="car-card-content">
-                        <h4>{{ auto.marca }} {{ auto.modelo }}</h4>
-                        <p class="car-year">Año: {{ auto.anio }}</p>
-                        <p>{{ auto.kilometraje|intcomma }} km | {{ auto.estado }}</p>
-                        <p class="car-price">${{ auto.precio|floatformat:2|intcomma }} MXN</p>
-                        <a href="#" class="btn btn-primary btn-block">Ver Detalles</a>
+                <!-- COLUMNA IZQUIERDA: LISTA DE AUTOS -->
+                <div class="featured-list">
+                    <div class="car-grid">
+                        
+                        {% for auto in featured_cars %}
+                        <div class="car-card">
+                            
+                            <div class="card-image-wrapper">
+                                <a href="{% url 'toggle_favorito' auto.pk %}" class="btn-fav-float" title="Guardar en favoritos">
+                                    {% if auto.pk in request.session.favoritos_ids %}
+                                        <span class="star-filled">★</span>
+                                    {% else %}
+                                        <span class="star-empty">★</span>
+                                    {% endif %}
+                                </a>
+
+                                {% if auto.imagen_auto %}
+                                    <img src="{{ auto.imagen_auto.url }}" alt="{{ auto.marca }} {{ auto.modelo }}">
+                                {% else %}
+                                    <img src="{% static 'autos/imagenes/placeholder.png' %}" alt="Imagen no disponible">
+                                {% endif %}
+                            </div>
+                            
+                            <div class="car-card-content">
+                                <h4>{{ auto.marca }} {{ auto.modelo }}</h4>
+                                <p class="car-year">Año: {{ auto.anio }}</p>
+                                <p>{{ auto.kilometraje|intcomma }} km | {{ auto.estado }}</p>
+                                <p class="car-price">${{ auto.precio|floatformat:2|intcomma }} MXN</p>
+                                
+                                <div style="display: flex; gap: 10px; margin-top: auto;">
+                                    <a href="{% url 'auto_detalle' auto.pk %}" class="btn btn-primary" style="flex: 2; text-align: center;">Ver Detalles</a>
+                                    
+                                    {% if auto.pk in request.session.comparacion_ids %}
+                                    <a href="{% url 'toggle_comparar' auto.pk %}" class="btn btn-secondary" style="flex: 1; text-align: center; background-color: #333; color: white; border-color: #333;" title="Quitar">✓</a>
+                                    {% else %}
+                                    <a href="{% url 'toggle_comparar' auto.pk %}" class="btn btn-secondary" style="flex: 1; text-align: center;" title="Comparar">+</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p>No hay vehículos destacados en este momento.</p>
+                        {% endfor %}
+
                     </div>
                 </div>
-                {% empty %}
-                <p>No hay vehículos destacados en este momento.</p>
-                {% endfor %}
+
+                <!-- COLUMNA DERECHA: VIDEO -->
+                <div class="featured-media">
+                    <div class="media-clean-wrapper">
+                        
+                        <!-- 
+                           RUTA DEL VIDEO:
+                           Asegúrate que tu archivo esté en: static/autos/media/video.mp4
+                        -->
+                        <video autoplay muted loop playsinline>
+                            <source src="{% static 'autos/css/imagenes/video.mp4' %}" type="video/mp4">
+                            <!-- Texto de respaldo -->
+                            <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #555;">
+                                <p>Video no encontrado. Verifica la ruta 'static/autos/media/video.mp4'</p>
+                            </div>
+                        </video>
+
+                    </div>
+                </div>
 
             </div>
         </section>
     </main>
+
+    {% if request.session.comparacion_ids %}
+    <div style="position: fixed; bottom: 30px; right: 30px; z-index: 9999;">
+        <a href="{% url 'comparar' %}" class="btn btn-primary" style="box-shadow: 0 4px 15px rgba(29, 215, 134, 0.4); border-radius: 50px; padding: 12px 25px; font-weight: bold;">
+            Comparar Autos ({{ request.session.comparacion_ids|length }})
+        </a>
+    </div>
+    {% endif %}
 
 {% endblock %}

@@ -2,71 +2,134 @@
 {% load static %}
 {% load humanize %}
 
-{% block title %}Catálogo - Vukimotors{% endblock %}
+{% block title %}Menú - Vukimotors{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* ESTILO PARA 3 COLUMNAS:
+       Esto obliga a que las tarjetas se acomoden de a 3 en pantallas normales.
+    */
+    .car-grid {
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)) !important;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
 
 <div class="container">
     <div class="page-content">
         
+        <!-- BARRA LATERAL DE FILTROS -->
         <aside class="filter-sidebar">
             <h3>Filtros</h3>
             
             <form class="form-group" method="get" action="{% url 'menu' %}">
-                <label for="ordenar">Ordenar por</label>
-                <select name="ordenar" id="ordenar" class="form-control" onchange="this.form.submit()">
-                    <option value="relevantes" {% if orden_actual == 'relevantes' %}selected{% endif %}>Mas Relevantes</option>
-                    <option value="precio_asc" {% if orden_actual == 'precio_asc' %}selected{% endif %}>Precio (Menor a Mayor)</option>
-                    <option value="precio_desc" {% if orden_actual == 'precio_desc' %}selected{% endif %}>Precio (Mayor a Menor)</option>
-                    <option value="ano_desc" {% if orden_actual == 'ano_desc' %}selected{% endif %}>Más Nuevos</option>
-                </select>
+                
+                <!-- Ordenar -->
+                <div class="form-group">
+                    <label for="ordenar">Ordenar por</label>
+                    <select name="ordenar" id="ordenar" class="form-control" onchange="this.form.submit()">
+                        <option value="relevantes" {% if orden_actual == 'relevantes' %}selected{% endif %}>Mas Relevantes</option>
+                        <option value="precio_asc" {% if orden_actual == 'precio_asc' %}selected{% endif %}>Precio (Menor a Mayor)</option>
+                        <option value="precio_desc" {% if orden_actual == 'precio_desc' %}selected{% endif %}>Precio (Mayor a Menor)</option>
+                        <option value="ano_desc" {% if orden_actual == 'ano_desc' %}selected{% endif %}>Más Nuevos</option>
+                    </select>
+                </div>
+            
+                <!-- Filtro de Marca (con memoria) -->
+                <div class="form-group" style="margin-top: 15px;">
+                    <label for="marca">Marca</label>
+                    <input type="text" id="marca" name="marca" placeholder="Ej: Toyota" value="{{ marca_actual }}">
+                </div>
+                
+                <!-- Filtro de Precio (con memoria) -->
+                <div class="form-group">
+                    <label for="precio_max">Precio Máximo</label>
+                    <input type="number" id="precio_max" name="precio_max" placeholder="Ej: 500000" value="{{ precio_max_actual }}">
+                </div>
+                
+                <!-- BOTONES DE ACCIÓN -->
+                <div style="display: flex; gap: 10px; margin-top: 20px; flex-direction: column;">
+                    <button type="submit" class="btn btn-primary btn-block" style="width: 100%;">Aplicar Filtros</button>
+                    
+                    <!-- 
+                       Botón ELIMINAR FILTROS:
+                       Solo aparece si escribiste algo en marca o precio.
+                    -->
+                    {% if marca_actual or precio_max_actual %}
+                    <a href="{% url 'menu' %}" class="btn btn-danger-outline btn-block" style="text-decoration: none; display: flex; align-items: center; justify-content: center; width: 100%;">
+                        × Eliminar Filtros
+                    </a>
+                    {% endif %}
+                </div>
+
             </form>
-
-            <div class="form-group">
-                <label for="marca">Marca</label>
-                <input type="text" id="marca" name="marca" placeholder="Ej: Toyota">
-            </div>
-            
-            <div class="form-group">
-                <label for="precio_max">Precio Máximo</label>
-                <input type="number" id="precio_max" name="precio_max" placeholder="Ej: 500000">
-            </div>
-            
-            <button type="submit" class="btn btn-primary btn-block">Aplicar Filtros</button>
-
         </aside>
 
+        <!-- GRID DE COCHES -->
         <div class="car-grid-container">
             <div class="car-grid">
 
                 {% for auto in autos %}
                 <div class="car-card">
-                    {% if auto.imagen_auto %}
-                        <img src="{{ auto.imagen_auto.url }}" alt="{{ auto.marca }} {{ auto.modelo }}">
-                    {% else %}
-                        <img src="{% static 'autos/imagenes/placeholder.png' %}" alt="Imagen no disponible">
-                    {% endif %}
                     
+                    <!-- IMAGEN Y ESTRELLA -->
+                    <div class="card-image-wrapper">
+                        
+                        <!-- Botón de Favorito -->
+                        <a href="{% url 'toggle_favorito' auto.pk %}" class="btn-fav-float" title="Guardar en favoritos">
+                            {% if auto.pk in request.session.favoritos_ids %}
+                                <span class="star-filled">★</span>
+                            {% else %}
+                                <span class="star-empty">★</span>
+                            {% endif %}
+                        </a>
+
+                        <!-- Imagen -->
+                        {% if auto.imagen_auto %}
+                            <img src="{{ auto.imagen_auto.url }}" alt="{{ auto.marca }} {{ auto.modelo }}">
+                        {% else %}
+                            <img src="{% static 'autos/imagenes/placeholder.png' %}" alt="Imagen no disponible">
+                        {% endif %}
+                    </div>
+                    
+                    <!-- INFORMACIÓN -->
                     <div class="car-card-content">
                         <h4>{{ auto.marca }} {{ auto.modelo }}</h4>
                         <p class="car-year">Año: {{ auto.anio }}</p>
                         <p>{{ auto.kilometraje|intcomma }} km | {{ auto.estado }}</p>
                         <p class="car-price">${{ auto.precio|floatformat:2|intcomma }} MXN</p>
-                        <a href="#" class="btn btn-primary btn-block">Ver Detalles</a>
+                        
+                        <div style="display: flex; gap: 10px; margin-top: auto;">
+                            <!-- Ver Detalles -->
+                            <a href="{% url 'auto_detalle' auto.pk %}" class="btn btn-primary" style="flex: 2; text-align: center;">Ver Detalles</a>
+                            
+                            <!-- Botón Comparar -->
+                            {% if auto.pk in request.session.comparacion_ids %}
+                                <a href="{% url 'toggle_comparar' auto.pk %}" class="btn btn-secondary" style="flex: 1; text-align: center; background-color: #333; color: white; border-color: #333;" title="Quitar">✓</a>
+                            {% else %}
+                                <a href="{% url 'toggle_comparar' auto.pk %}" class="btn btn-secondary" style="flex: 1; text-align: center;" title="Comparar">+</a>
+                            {% endif %}
+                        </div>
+                        
                     </div>
                 </div>
                 {% empty %}
-                <p>No se encontraron vehículos que coincidan con tu búsqueda.</p>
+                <div style="grid-column: 1 / -1; text-align: center; padding: 4rem;">
+                    <h3>No se encontraron vehículos 🔍</h3>
+                    <p>Intenta ajustar tus filtros de búsqueda.</p>
+                    <a href="{% url 'menu' %}" class="btn btn-primary" style="margin-top: 10px; display: inline-block;">Ver todos los autos</a>
+                </div>
                 {% endfor %}
             </div>
 
+            <!-- PAGINACIÓN -->
             {% if is_paginated %}
                 <div class="pagination">
                     <span class="step-links">
                         {% if page_obj.has_previous %}
-                            <a href="?page=1">&laquo;</a>
-                            <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                            <a href="?page={{ page_obj.previous_page_number }}&marca={{ marca_actual }}&precio_max={{ precio_max_actual }}&ordenar={{ orden_actual }}">&laquo; Anterior</a>
                         {% endif %}
 
                         <span class="current">
@@ -74,11 +137,23 @@
                         </span>
 
                         {% if page_obj.has_next %}
-                            <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
-                            <a href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a>
+                            <a href="?page={{ page_obj.next_page_number }}&marca={{ marca_actual }}&precio_max={{ precio_max_actual }}&ordenar={{ orden_actual }}">Siguiente &raquo;</a>
                         {% endif %}
                     </span>
                 </div>
             {% endif %}
 
-        </div> </div> </div> {% endblock %}
+        </div> 
+    </div> 
+</div> 
+
+<!-- BOTÓN FLOTANTE PARA IR A COMPARAR -->
+{% if request.session.comparacion_ids %}
+<div style="position: fixed; bottom: 30px; right: 30px; z-index: 9999;">
+    <a href="{% url 'comparar' %}" class="btn btn-primary" style="box-shadow: 0 4px 15px rgba(29, 215, 134, 0.4); border-radius: 50px; padding: 12px 25px; font-weight: bold;">
+        Comparar Autos ({{ request.session.comparacion_ids|length }})
+    </a>
+</div>
+{% endif %}
+
+{% endblock %}

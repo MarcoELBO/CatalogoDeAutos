@@ -7,8 +7,10 @@
     
     <title>{% block title %}Vukimotors{% endblock %}</title>
 
+    <!-- Enlace a tu CSS principal -->
     <link rel="stylesheet" href="{% static 'autos/css/main.css' %}">
     
+    <!-- Fuentes de Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     
     {% block extra_css %}{% endblock %}
@@ -18,26 +20,97 @@
     <nav class="navbar">
         <div class="container">
             <a href="{% url 'inicio' %}" class="navbar-brand">Vukimotors</a>
-            <div class="navbar-links">
-                <a href="{% url 'inicio' %}">Inicio</a>
+            
+            <div class="navbar-links" style="display: flex; align-items: center; gap: 20px;">
                 
-                <a href="{% url 'menu' %}">Menú</a>
+                <!-- 
+                   1. ENLACE INICIO 
+                   Lógica: Se activa (verde/negrita) si la URL actual es 'inicio'
+                -->
+                <a href="{% url 'inicio' %}" 
+                   class="{% if request.resolver_match.url_name == 'inicio' %}active{% endif %}">
+                   Inicio
+                </a>
                 
-                <a href="#" class="btn btn-secondary">Iniciar Sesión</a>
+                <!-- 
+                   2. ENLACE MENÚ 
+                   Lógica: Se activa si es 'menu' O si estás viendo detalles de un auto
+                -->
+                <a href="{% url 'menu' %}" 
+                   class="{% if request.resolver_match.url_name == 'menu' or request.resolver_match.url_name == 'auto_detalle' %}active{% endif %}">
+                   Menú
+                </a>
+                
+                <!-- 
+                   3. ENLACE FAVORITOS 
+                   Lógica: Se activa si es 'favoritos'.
+                   Incluye la burbuja verde con el contador.
+                -->
+                <a href="{% url 'favoritos' %}" 
+                   class="{% if request.resolver_match.url_name == 'favoritos' %}active{% endif %}"
+                   style="position: relative; text-decoration: none;">
+                    Favoritos
+                    {% if request.session.favoritos_ids %}
+                        <span style="
+                            background-color: #1DD786; 
+                            color: white; 
+                            border-radius: 50%; 
+                            padding: 2px 6px; 
+                            font-size: 0.7rem; 
+                            position: absolute; 
+                            top: -8px; 
+                            right: -12px;
+                            font-weight: bold;">
+                            {{ request.session.favoritos_ids|length }}
+                        </span>
+                    {% endif %}
+                </a>
+                
+                <!-- 
+                   4. BARRA DE USUARIO
+                   Si está logueado: Muestra saludo separado y botón salir rojo.
+                   Si NO está logueado: Muestra botón verde para entrar.
+                -->
+                {% if user.is_authenticated %}
+                    
+                    <!-- Saludo (Clase .user-greeting para la línea vertical divisoria) -->
+                    <span class="user-greeting">
+                        Hola, {{ user.first_name|default:user.username }}
+                    </span>
+                    
+                    <!-- Botón Salir (Clase .btn-logout para diferenciarlo) -->
+                    <a href="{% url 'logout' %}" class="btn btn-logout">Salir</a>
+                
+                {% else %}
+                    <!-- Botón Iniciar Sesión Estándar -->
+                    <a href="{% url 'login' %}" class="btn btn-secondary">Iniciar Sesión</a>
+                {% endif %}
+
             </div>
         </div>
     </nav>
 
+    <!-- Contenido Principal Dinámico -->
     <main>
         {% block content %}
         {% endblock %}
     </main>
 
+    <!-- Pie de Página -->
     <footer class="footer">
         <p>&copy; 2025 Vukimotors. Todos los derechos reservados.</p>
             <div class="navbar-links">
                  <a href="{% url 'faqs' %}">Faqs</a>
             </div>
     </footer>
+
+    <!-- Botón Flotante de Comparar (Solo aparece si hay autos seleccionados) -->
+    {% if request.session.comparacion_ids %}
+    <div style="position: fixed; bottom: 30px; right: 30px; z-index: 9999;">
+        <a href="{% url 'comparar' %}" class="btn btn-primary" style="box-shadow: 0 4px 15px rgba(29, 215, 134, 0.4); border-radius: 50px; padding: 12px 25px;">
+            Comparar ({{ request.session.comparacion_ids|length }})
+        </a>
+    </div>
+    {% endif %}
 </body>
 </html>

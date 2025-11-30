@@ -1,0 +1,96 @@
+/* static/css/auth.css */
+/* Contenedor principal para centrar el formulario */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 1rem;
+    min-height: calc(100vh - 120px); /* Resta el alto aprox. del navbar y un poco de margen */
+    background-color: #f8f9fa; /* Color de fondo suave (el mismo que body) */
+}
+
+/* La tarjeta o "caja" del formulario */
+.auth-form-container {
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    padding: 2rem 2.5rem;
+    width: 100%;
+    max-width: 450px;
+    border-top: 4px solid #1DD786; /* Acento de color de tu marca */
+}
+
+.auth-form-container h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 2rem;
+    font-weight: 600;
+}
+
+/* Grupo de formulario (label + input) */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #555;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="tel"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; /* Importante para que el padding no rompa el ancho */
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Efecto al seleccionar un input */
+.form-group input:focus {
+    border-color: #1DD786;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+}
+
+/* Botón principal */
+.btn-primary {
+    width: 100%;
+    padding: 0.85rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #1DD786;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #1DD786; /* Un azul más oscuro al pasar el ratón */
+}
+
+/* Pie del formulario (para enlaces) */
+.form-footer {
+    margin-top: 1.5rem;
+    text-align: center;
+    color: #777;
+    font-size: 0.9rem;
+}
+
+.form-footer a {
+    color: #1DD786;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.form-footer a:hover {
+    text-decoration: underline;
+}

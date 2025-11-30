@@ -32,7 +32,7 @@ main {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1300px; /* Aumenté un poco el ancho total para dar más aire */
     margin: 0 auto;
     padding: 0 20px;
 }
@@ -186,10 +186,13 @@ main {
     gap: 30px;
     padding-top: 30px;
     padding-bottom: 30px;
+    align-items: flex-start; /* Alineación superior para que no se estire el sidebar */
 }
 
+/* SIDEBAR MÁS PEQUEÑA (FILTROS) */
 .filter-sidebar {
-    flex: 1 1 250px; /* Crece/encoge, base de 250px */
+    /* flex-grow: 0 (no crece), flex-shrink: 0 (no encoge), flex-basis: 220px (ancho fijo) */
+    flex: 0 0 220px; 
     background-color: var(--background-color);
     padding: 20px;
     border-radius: var(--border-radius);
@@ -203,14 +206,19 @@ main {
     padding-bottom: 10px;
 }
 
-/* --- 7. Grid de Autos y Tarjetas (Usado en Inicio y Catálogo) --- */
+/* CONTENEDOR DE LA REJILLA DE AUTOS (MÁS GRANDE) */
 .car-grid-container {
-    flex: 3 1 600px; /* Crece 3x más que el sidebar */
+    /* flex: 1 hace que tome todo el espacio restante disponible */
+    flex: 1; 
+    min-width: 0; /* Truco de CSS para evitar desbordamientos en grid anidados */
 }
 
 .car-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    /* minmax(250px, 1fr) asegura que las tarjetas no sean menores a 250px.
+       Con el espacio extra ganado al reducir el sidebar, cabrán 3 tarjetas.
+    */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
 }
 
@@ -324,4 +332,107 @@ main {
 /* (Opcional) Efecto al pasar el mouse sobre "Faqs" */
 .footer .navbar-links a:hover {
   text-decoration: underline;
+}
+
+/* Estilos para el botón de Favoritos (Estrellita) */
+
+.card-image-wrapper {
+    position: relative; /* Necesario para posicionar la estrella encima */
+    display: block;
+}
+
+.btn-fav-float {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+    z-index: 10;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-fav-float:hover {
+    transform: scale(1.1);
+    background: white;
+}
+
+/* Estrella vacía (no favorito) */
+.star-empty {
+    color: #ccc; /* Gris */
+}
+
+/* Estrella llena (favorito) */
+.star-filled {
+    color: #ffc107; /* Amarillo/Dorado */
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* --- 10. Barra de Usuario (Nuevo) --- */
+
+/* El texto de saludo "Hola, Usuario" */
+.user-greeting {
+    font-weight: 700;          /* Texto en negrita */
+    color: #343a40;            /* Color gris oscuro (casi negro) */
+    cursor: default;           /* El cursor no cambia a manita (no es clicable) */
+    font-size: 0.95rem;
+    
+    /* Línea divisoria a la izquierda para separar del menú */
+    border-left: 2px solid #e0e0e0; 
+    padding-left: 20px;        /* Espacio interno desde la línea */
+    margin-left: 15px;         /* Espacio externo desde "Favoritos" */
+    margin-right: 15px;        /* Espacio hacia el botón Salir */
+    
+    display: flex;
+    align-items: center;
+    height: 30px;              /* Altura para centrar la línea vertical */
+}
+
+/* Ajuste para el botón Salir */
+.btn-logout {
+    font-size: 0.9rem;
+    padding: 8px 18px;
+    border-radius: 6px;
+    /* Botón rojo suave para salir */
+    border: 1px solid #dc3545; 
+    color: #dc3545;
+    background-color: transparent;
+    transition: all 0.2s;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.btn-logout:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* --- 12. Estilos para Enlace Activo (Navegación) --- */
+
+.navbar-links a.active {
+    color: var(--primary-color) !important; /* Fuerza el color verde */
+    font-weight: 700;                       /* Texto en negrita */
+    position: relative;
+}
+
+/* Línea verde debajo del enlace activo */
+.navbar-links a.active::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 3px;
+    background-color: var(--primary-color);
+    position: absolute;
+    bottom: -5px; /* Ajusta la distancia de la línea */
+    left: 0;
+    border-radius: 2px;
 }

@@ -1,21 +1,73 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Preguntas Frecuentes - Vukimotors{% endblock %}
 
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'autos/css/faqs.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="container">
-    <h1>Preguntas Frecuentes (FAQs)</h1>
-    <p>Bienvenido a la sección de preguntas frecuentes. Aquí puedes añadir respuestas a las consultas más comunes de tus usuarios.</p>
+    <div class="faq-header">
+        <h1>Preguntas Frecuentes (FAQs)</h1>
+        <p>Encuentra las respuestas a las consultas más comunes.</p>
+    </div>
 
     <section class="faq-list">
-        <h2>¿Cómo comprar un auto?</h2>
-        <p>Puedes ver los autos disponibles en el catálogo y contactar al vendedor desde la ficha del vehículo.</p>
 
-        <h2>¿Puedo vender mi auto aquí?</h2>
-        <p>Próximamente podrás crear una cuenta de vendedor y publicar anuncios con fotos y detalles.</p>
+        <div class="faq-item">
+            <input type="checkbox" id="faq1" class="faq-toggle">
+            
+            <label for="faq1" class="faq-question">
+                <span>¿Cómo comprar un auto?</span>
+                <span class="faq-icon">+</span>
+            </label>
+            
+            <div class="faq-answer">
+                <p>
+                    Puedes ver todos los autos disponibles en nuestro catálogo. 
+                    Cuando encuentres uno que te interese, puedes contactar 
+                    directamente al vendedor (sea agencia o privado) usando 
+                    la información de contacto en la ficha del vehículo.
+                </p>
+            </div>
+        </div>
 
-        <h2>¿Cómo funciona la garantía?</h2>
-        <p>La garantía depende del vendedor y del estado del vehículo (nuevo o usado). Consulta la ficha del anuncio.</p>
+        <div class="faq-item">
+            <input type="checkbox" id="faq2" class="faq-toggle">
+            <label for="faq2" class="faq-question">
+                <span>¿Puedo vender mi auto aquí?</span>
+                <span class="faq-icon">+</span>
+            </label>
+            <div class="faq-answer">
+                <p>
+                    ¡Próximamente! Estamos trabajando en un portal para que 
+                    vendedores privados y agencias puedan registrarse y 
+                    publicar sus vehículos fácilmente. Podrás subir fotos, 
+                    detalles, precio y gestionar tus anuncios.
+                </p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <input type="checkbox" id="faq3" class="faq-toggle">
+            <label for="faq3" class="faq-question">
+                <span>¿Cómo funciona la garantía?</span>
+                <span class="faq-icon">+</span>
+            </label>
+            <div class="faq-answer">
+                <p>
+                    La garantía depende de cada vendedor y del estado del 
+                    vehículo. Vukimotors es una plataforma de catálogo que 
+                    conecta compradores y vendedores. La garantía de autos 
+                    nuevos es gestionada por la agencia, mientras que la de 
+                    autos usados se debe consultar directamente con el 
+                    vendedor en la ficha del anuncio.
+                </p>
+            </div>
+        </div>
+
     </section>
 </div>
 {% endblock %}

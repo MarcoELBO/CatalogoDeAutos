@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Comparador - Vukimotors{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'autos/css/comparar.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="compare-page">
+    <div class="container">
+        <div class="compare-header-text">
+            <h1>Comparativa</h1>
+            <p>Analiza cada detalle antes de decidir.</p>
+        </div>
+
+        {% if autos_comparar %}
+            <div class="compare-table-wrapper">
+                <table class="compare-table">
+                    <thead>
+                        <tr>
+                            <th class="label-col empty-corner"></th> {% for auto in autos_comparar %}
+                            <th class="car-col-header">
+                                <div class="car-card-header">
+                                    <a href="{% url 'toggle_comparar' auto.pk %}" class="btn-remove" title="Eliminar">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                    </a>
+                                    
+                                    <div class="img-container">
+                                        <img src="{{ auto.imagen_auto.url }}" alt="{{ auto.modelo }}">
+                                    </div>
+                                    
+                                    <h3 class="car-brand">{{ auto.marca }}</h3>
+                                    <h2 class="car-model">{{ auto.modelo }}</h2>
+                                    <div class="car-price">${{ auto.precio|floatformat:0|intcomma }}</div>
+                                    
+                                    <a href="{% url 'auto_detalle' auto.pk %}" class="btn-detail">Ver Ficha</a>
+                                </div>
+                            </th>
+                            {% endfor %}
+                            
+                            {% if autos_comparar|length < 3 %}
+                                <th class="car-col-header placeholder-col">
+                                    <div class="add-car-placeholder">
+                                        <a href="{% url 'menu' %}">
+                                            <div class="plus-icon">+</div>
+                                            <span>Añadir Auto</span>
+                                        </a>
+                                    </div>
+                                </th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr class="section-divider"><td colspan="4">Datos Generales</td></tr>
+                        <tr>
+                            <td class="label-row">Año</td>
+                            {% for auto in autos_comparar %} <td class="data-row">{{ auto.anio }}</td> {% endfor %}
+                            {% if autos_comparar|length < 3 %} <td class="data-row"></td> {% endif %}
+                        </tr>
+                        <tr>
+                            <td class="label-row">Versión</td>
+                            {% for auto in autos_comparar %} <td class="data-row">{{ auto.version|default:"--" }}</td> {% endfor %}
+                            {% if autos_comparar|length < 3 %} <td class="data-row"></td> {% endif %}
+                        </tr>
+                        <tr>
+                            <td class="label-row">Estado</td>
+                            {% for auto in autos_comparar %} <td class="data-row">{{ auto.estado }}</td> {% endfor %}
+                            {% if autos_comparar|length < 3 %} <td class="data-row"></td> {% endif %}
+                        </tr>
+                        <tr>
+                            <td class="label-row">Kilometraje</td>
+                            {% for auto in autos_comparar %} <td class="data-row">{{ auto.kilometraje|intcomma }} km</td> {% endfor %}
+                            {% if autos_comparar|length < 3 %} <td class="data-row"></td> {% endif %}
+                        </tr>
+
+                        <tr class="section-divider"><td colspan="4">Diseño</td></tr>
+                        <tr>
+                            <td class="label-row">Color Exterior</td>
+                            {% for auto in autos_comparar %} 
+                                <td class="data-row">
+                                    <span class="color-dot" style="background-color: gray;"></span> 
+                                    {{ auto.color|default:"No especif." }}
+                                </td> 
+                            {% endfor %}
+                            {% if autos_comparar|length < 3 %} <td class="data-row"></td> {% endif %}
+                        </tr>
+
+                        <tr class="section-divider"><td colspan="4">Vendedor</td></tr>
+                        <tr>
+                            <td class="label-row">Vendido por</td>
+                            {% for auto in autos_comparar %} 
+                                <td class="data-row">
+                                    <strong>{{ auto.vendedor.nombre }}</strong><br>
+                                    <span style="font-size:0.8rem; color:#888;">{{ auto.vendedor.tipo }}</span>
+                                </td> 
+                            {% endfor %}
+                            {% if autos_comparar|length < 3 %} <td class="data-row"></td> {% endif %}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        {% else %}
+            <div class="empty-state-modern">
+                <div class="empty-illustration">
+                    🚘 vs 🚙
+                </div>
+                <h2>Tu garaje de comparación está vacío</h2>
+                <p>Navega por el menú y selecciona autos para enfrentarlos cara a cara.</p>
+                <a href="{% url 'menu' %}" class="btn-main-action">Ir al Menú</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

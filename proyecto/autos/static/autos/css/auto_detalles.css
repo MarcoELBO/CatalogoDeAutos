@@ -1,0 +1,161 @@
+/* static/css/detalle.css */
+
+/* 1. HERO BANNER */
+.detail-hero {
+    height: 500px;
+    background-size: cover;
+    background-position: center;
+    color: white;
+    position: relative;
+    border-bottom: 5px solid var(--primary-color, #1DD786);
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.1));
+    display: flex; flex-direction: column; justify-content: center;
+    padding-bottom: 4rem; 
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.hero-subtitle {
+    font-size: 1.8rem;
+    font-weight: 300;
+    margin: 0.5rem 0 0;
+    opacity: 0.9;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+.breadcrumbs { font-size: 1rem; margin-bottom: 1rem; opacity: 0.8; }
+.breadcrumbs a { color: white; text-decoration: none; font-weight: 600; }
+.breadcrumbs a:hover { text-decoration: underline; }
+.breadcrumbs span { color: #eee; }
+
+
+/* 2. LAYOUT SUPERPUESTO */
+.detail-content {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 2rem;
+    margin-top: -100px; /* Efecto flotante */
+    position: relative; 
+    z-index: 10; 
+    padding-bottom: 4rem;
+}
+
+@media (max-width: 900px) {
+    .detail-content { grid-template-columns: 1fr; margin-top: -50px; }
+    .detail-sidebar { grid-row: 1; }
+}
+
+/* 3. TARJETAS */
+.detail-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.detail-card h3 {
+    margin-top: 0;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+/* 4. SIDEBAR */
+.detail-sidebar .sticky-card { position: sticky; top: 100px; }
+.detail-price { font-size: 2.5rem; font-weight: 800; color: var(--primary-color, #1DD786); margin: 0 0 1rem 0; text-align: center; }
+.sidebar-divider { border: none; border-top: 1px solid #eee; margin: 1.5rem 0; }
+.vendedor-nombre { font-size: 1.3rem; font-weight: 700; margin: 0; color: #222; }
+.vendedor-tipo { font-size: 0.95rem; color: #666; margin: 0 0 1.5rem 0; }
+.detail-sidebar .btn { margin-bottom: 1rem; }
+
+/* 5. ESPECIFICACIONES (Separadas) */
+.spec-list {
+    list-style: none; padding: 0; margin: 0;
+    display: flex; flex-wrap: wrap;
+    gap: 30px; 
+}
+
+.spec-list li {
+    flex-basis: calc(50% - 15px);
+    padding: 1rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex; justify-content: space-between; align-items: center;
+}
+
+.spec-list li span { font-size: 0.95rem; color: #666; font-weight: 500; }
+.spec-list li strong { font-size: 1.05rem; color: #222; font-weight: 700; }
+
+/* 6. RESEÑAS */
+.reviews-list { margin-bottom: 2rem; }
+.review-item { border-bottom: 1px solid #f0f0f0; padding: 1.5rem 0; }
+.review-item:last-child { border-bottom: none; }
+.review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.review-author { font-size: 1.1rem; font-weight: bold; color: #333; }
+.review-stars { color: #ffc107; letter-spacing: 2px; font-size: 1.1rem; }
+.review-text { margin: 0 0 0.5rem 0; color: #555; line-height: 1.6; }
+.review-date { font-size: 0.8rem; color: #999; }
+.no-reviews { text-align: center; color: #888; font-style: italic; padding: 2rem; background: #f9f9f9; border-radius: 8px; }
+
+/* 7. FORMULARIO DE RESEÑA (ACTUALIZADO) */
+.review-form-container {
+    background-color: #f8fcf9;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 30px; /* Separación inferior */
+}
+
+.review-form-container h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    color: #222;
+}
+
+.review-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1rem;
+    box-sizing: border-box;
+    margin-top: 5px;
+    
+    /* CAMBIO CLAVE: Tamaño fijo */
+    resize: none; 
+    height: 120px;
+}
+
+.review-form textarea:focus {
+    outline: none;
+    border-color: var(--primary-color, #1DD786);
+    box-shadow: 0 0 0 3px rgba(29, 215, 134, 0.1);
+}
+
+.login-prompt {
+    text-align: center;
+    padding: 15px;
+    background: #fff3cd;
+    color: #856404;
+    border-radius: 6px;
+    border: 1px solid #ffeeba;
+}
+.login-prompt a {
+    color: #856404;
+    font-weight: bold;
+    text-decoration: underline;
+}

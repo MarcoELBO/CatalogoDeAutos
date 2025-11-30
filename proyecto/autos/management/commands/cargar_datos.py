@@ -1,97 +1,198 @@
 from django.core.management.base import BaseCommand
-from django.core.files import File
-from django.conf import settings
-from autos.models import Vendedor, Auto
-import os
-
+from catalogo.models import Auto, Vendedor
 
 class Command(BaseCommand):
-    help = 'Carga 15 vendedores y 15 autos de ejemplo en la base de datos (incluye imágenes si están disponibles)'
+    help = 'Carga una lista inicial de autos en la base de datos'
 
-    def add_arguments(self, parser):
-        parser.add_argument('--no-images', action='store_true', help='No intentar cargar imágenes aunque existan')
-
-    def handle(self, *args, **options):
-        no_images = options.get('no_images', False)
-
-        # Crear 15 vendedores
-        vendedores = []
-        for i in range(1, 16):
-            v_data = {
-                'nombre': f'Vendedor {i}',
-                'tipo': 'Concesionario' if i % 3 == 0 else 'Agencia' if i % 3 == 1 else 'Privado',
-                'email': f'vendedor{i}@example.com',
-                'telefono': f'555-{1000 + i}'
+    def handle(self, *args, **kwargs):
+        # 1. Aseguramos que exista al menos un vendedor para asignar los autos
+        vendedor, created = Vendedor.objects.get_or_create(
+            nombre="Agencia Vukimotors",
+            defaults={
+                "tipo": "Agencia",
+                "correo": "ventas@vukimotors.com",
+                "telefono": "555-0123"
             }
-            v, _ = Vendedor.objects.get_or_create(email=v_data['email'], defaults=v_data)
-            vendedores.append(v)
+        )
+        
+        if created:
+            self.stdout.write(self.style.SUCCESS(f'Se creó el vendedor: {vendedor.nombre}'))
+        else:
+            self.stdout.write(f'Usando vendedor existente: {vendedor.nombre}')
 
-        # Directorio donde el comando buscará imágenes de ejemplo
-        imagenes_dir = os.path.join(settings.BASE_DIR, 'autos', 'datos_ejemplo', 'imagenes')
-
-        # Mapado de marcas a modelos reales para generar datos más verosímiles
-        modelos_por_marca = {
-            'Toyota': ['Corolla', 'Camry', 'RAV4'],
-            'Honda': ['Civic', 'Accord', 'CR-V'],
-            'Volkswagen': ['Golf', 'Polo', 'Passat'],
-            'Ford': ['Focus', 'Fiesta', 'Mustang'],
-            'Chevrolet': ['Cruze', 'Camaro', 'Spark'],
-            'Nissan': ['Sentra', 'Altima', 'Qashqai'],
-            'Hyundai': ['Elantra', 'Tucson', 'i30'],
-            'Kia': ['Rio', 'Sportage', 'Ceed'],
-            'BMW': ['Serie3', 'Serie5', 'X3'],
-            'Mercedes': ['C-Class', 'E-Class', 'GLA'],
-            'Audi': ['A3', 'A4', 'Q3'],
-            'Renault': ['Clio', 'Megane', 'Captur'],
-            'Peugeot': ['208', '308', '3008'],
-            'Mazda': ['Mazda2', 'Mazda3', 'CX-5'],
-            'Subaru': ['Impreza', 'Forester', 'Outback'],
-        }
-
-        marcas = list(modelos_por_marca.keys())
-        colores = ['Rojo', 'Azul', 'Negro', 'Blanco', 'Gris']
-
-        # Crear 15 autos
-        for i in range(1, 16):
-            marca = marcas[(i - 1) % len(marcas)]
-            # elegir un modelo real para la marca
-            modelos = modelos_por_marca.get(marca, [f'Model{i}'])
-            modelo = modelos[(i - 1) % len(modelos)]
-            anio = 2024 - ((i - 1) % 6)  # cicla entre 2019-2024 aproximadamente
-            version = f'{modelo} {i % 3 + 1}'
-            color = colores[i % len(colores)]
-            precio = 12000.00 + i * 1000
-            kilometraje = 0 if i % 2 == 0 else i * 1000
-            estado = 'Nuevo' if kilometraje == 0 else 'Usado'
-            vendedor = vendedores[(i - 1) % len(vendedores)]
-            imagen_nombre = f"{marca.lower()}_{i}.jpg"
-
-            defaults = {
-                'marca': marca,
-                'modelo': modelo,
-                'anio': anio,
-                'version': version,
-                'color': color,
-                'precio': precio,
-                'kilometraje': kilometraje,
-                'estado': estado,
-                'vendedor': vendedor,
+        # 2. Tu lista de autos (JSON)
+        autos_data = [
+            {
+                "marca": "Ford",
+                "modelo": "Ranger",
+                "año": 2025,
+                "versión": "Wildtrak Double Cab 4×4",
+                "color": "Gris oscuro metálico",
+                "precio_mxn": 960900,
+                "kilometraje": 10000,
+                "estado": "Seminuevo"
+            },
+            {
+                "marca": "Ford",
+                "modelo": "Maverick",
+                "año": 2025,
+                "versión": "XLT Híbrida",
+                "color": "Blanco perla",
+                "precio_mxn": 752100,
+                "kilometraje": 5000,
+                "estado": "Nuevo"
+            },
+            {
+                "marca": "Ford",
+                "modelo": "Bronco Sport",
+                "año": 2025,
+                "versión": "Outer Banks",
+                "color": "Rojo desierto",
+                "precio_mxn": 859000,
+                "kilometraje": 15000,
+                "estado": "Seminuevo"
+            },
+            {
+                "marca": "Chevrolet",
+                "modelo": "Aveo",
+                "año": 2024,
+                "versión": "LS Sedán",
+                "color": "Blanco clásico",
+                "precio_mxn": 320000,
+                "kilometraje": 20000,
+                "estado": "Usado"
+            },
+            {
+                "marca": "Chevrolet",
+                "modelo": "Blazer",
+                "año": 2025,
+                "versión": "V6 3.6L",
+                "color": "Azul tormenta/negro",
+                "precio_mxn": 990900,
+                "kilometraje": 8000,
+                "estado": "Nuevo"
+            },
+            {
+                "marca": "Chevrolet",
+                "modelo": "Silverado",
+                "año": 2024,
+                "versión": "Trail Boss",
+                "color": "Negro",
+                "precio_mxn": 1200000,
+                "kilometraje": 25000,
+                "estado": "Seminuevo"
+            },
+            {
+                "marca": "Nissan",
+                "modelo": "Versa",
+                "año": 2025,
+                "versión": "Advance CVT",
+                "color": "Azul marino",
+                "precio_mxn": 411900,
+                "kilometraje": 7000,
+                "estado": "Seminuevo"
+            },
+            {
+                "marca": "Nissan",
+                "modelo": "Kicks",
+                "año": 2024,
+                "versión": "SR",
+                "color": "Rojo fuego",
+                "precio_mxn": 485000,
+                "kilometraje": 12000,
+                "estado": "Usado"
+            },
+            {
+                "marca": "Nissan",
+                "modelo": "NP300",
+                "año": 2023,
+                "versión": "Cabina Doble 4×2",
+                "color": "Blanco",
+                "precio_mxn": 430000,
+                "kilometraje": 30000,
+                "estado": "Usado"
+            },
+            {
+                "marca": "Volkswagen",
+                "modelo": "Jetta",
+                "año": 2025,
+                "versión": "GLI",
+                "color": "Rojo Tornado / Negro",
+                "precio_mxn": 480000,
+                "kilometraje": 6000,
+                "estado": "Nuevo"
+            },
+            {
+                "marca": "Volkswagen",
+                "modelo": "Taos",
+                "año": 2024,
+                "versión": "Trendline",
+                "color": "Blanco puro",
+                "precio_mxn": 420000,
+                "kilometraje": 14000,
+                "estado": "Seminuevo"
+            },
+            {
+                "marca": "Volkswagen",
+                "modelo": "Tiguan",
+                "año": 2025,
+                "versión": "Comfortline",
+                "color": "Azul Monterey",
+                "precio_mxn": 677990,
+                "kilometraje": 12000,
+                "estado": "Seminuevo"
+            },
+            {
+                "marca": "Kia",
+                "modelo": "K3",
+                "año": 2025,
+                "versión": "L TA",
+                "color": "Plata lunar",
+                "precio_mxn": 322400,
+                "kilometraje": 4000,
+                "estado": "Nuevo"
+            },
+            {
+                "marca": "Kia",
+                "modelo": "Seltos",
+                "año": 2024,
+                "versión": "EX CVT",
+                "color": "Gris titanio",
+                "precio_mxn": 420000,
+                "kilometraje": 15000,
+                "estado": "Usado"
+            },
+            {
+                "marca": "Kia",
+                "modelo": "Forte",
+                "año": 2025,
+                "versión": "GT",
+                "color": "Negro brillante",
+                "precio_mxn": 482000,
+                "kilometraje": 5000,
+                "estado": "Seminuevo"
             }
+        ]
 
-            auto, created = Auto.objects.get_or_create(marca=marca, modelo=modelo, anio=anio, vendedor=vendedor, defaults=defaults)
+        # 3. Iterar y Guardar
+        contador = 0
+        for data in autos_data:
+            # Verificamos si el auto ya existe para no duplicarlo (opcional)
+            if not Auto.objects.filter(marca=data['marca'], modelo=data['modelo'], anio=data['año'], vendedor=vendedor).exists():
+                Auto.objects.create(
+                    marca=data['marca'],
+                    modelo=data['modelo'],
+                    anio=data['año'],          # Mapeamos 'año' del JSON a 'anio' del modelo
+                    version=data['versión'],   # Mapeamos 'versión' a 'version'
+                    color=data['color'],
+                    precio=data['precio_mxn'], # Mapeamos 'precio_mxn' a 'precio'
+                    kilometraje=data['kilometraje'],
+                    estado=data['estado'],
+                    vendedor=vendedor          # Asignamos el vendedor
+                )
+                self.stdout.write(f"Guardado: {data['marca']} {data['modelo']}")
+                contador += 1
+            else:
+                self.stdout.write(self.style.WARNING(f"Saltado (ya existe): {data['marca']} {data['modelo']}"))
 
-            # Intentar añadir imagen si existe y no se pidió omitir imágenes
-            if not no_images:
-                posible_path = os.path.join(imagenes_dir, imagen_nombre)
-                if os.path.exists(posible_path):
-                    try:
-                        with open(posible_path, 'rb') as f:
-                            nuevo_nombre = f"{auto.marca}_{auto.modelo}_{auto.id}{os.path.splitext(imagen_nombre)[1]}"
-                            auto.imagen_auto.save(nuevo_nombre, File(f), save=True)
-                    except Exception as e:
-                        self.stderr.write(self.style.WARNING(f"No se pudo guardar la imagen {imagen_nombre}: {e}"))
-                else:
-                    # No es un error, solo aviso informativo
-                    self.stdout.write(self.style.NOTICE(f"Imagen no encontrada: {posible_path} (no se cargará)"))
-
-        self.stdout.write(self.style.SUCCESS('Se han cargado 15 vendedores y 15 autos (si no existían)'))
+        self.stdout.write(self.style.SUCCESS(f'¡Proceso terminado! Se agregaron {contador} autos.'))

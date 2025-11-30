@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Mis Favoritos - Vukimotors{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 3rem 0; min-height: 60vh;">
+    
+    <h1 style="margin-bottom: 2rem; border-bottom: 2px solid #eee; padding-bottom: 1rem;">
+        Mis Vehículos Favoritos
+    </h1>
+
+    {% if autos %}
+        <div class="car-grid">
+            {% for auto in autos %}
+            <div class="car-card">
+                
+                <div class="card-image-wrapper">
+                    <a href="{% url 'toggle_favorito' auto.pk %}" class="btn-fav-float" title="Quitar de favoritos">
+                        <span class="star-filled">★</span>
+                    </a>
+
+                    {% if auto.imagen_auto %}
+                        <img src="{{ auto.imagen_auto.url }}" alt="{{ auto.marca }} {{ auto.modelo }}">
+                    {% else %}
+                        <img src="{% static 'autos/imagenes/placeholder.png' %}" alt="Imagen no disponible">
+                    {% endif %}
+                </div>
+                
+                <div class="car-card-content">
+                    <h4>{{ auto.marca }} {{ auto.modelo }}</h4>
+                    <p class="car-year">Año: {{ auto.anio }}</p>
+                    <p>{{ auto.kilometraje|intcomma }} km | {{ auto.estado }}</p>
+                    <p class="car-price">${{ auto.precio|floatformat:2|intcomma }} MXN</p>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: auto;">
+                        <a href="{% url 'auto_detalle' auto.pk %}" class="btn btn-primary" style="flex: 1; text-align: center;">
+                            Ver Detalles
+                        </a>
+                        <a href="{% url 'toggle_favorito' auto.pk %}" class="btn btn-secondary" style="background-color: #ffcccc; color: #d9534f; border-color: #d9534f;" title="Eliminar">
+                            Eliminar
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    
+    {% else %}
+        <div style="text-align: center; padding: 4rem; background-color: #f9f9f9; border-radius: 12px;">
+            <div style="font-size: 4rem; color: #ddd; margin-bottom: 1rem;">★</div>
+            <h2 style="color: #555;">No tienes favoritos guardados</h2>
+            <p style="color: #888; margin-bottom: 2rem;">
+                Navega por nuestro menú y marca con una estrella los autos que te gusten para verlos aquí.
+            </p>
+            <a href="{% url 'menu' %}" class="btn btn-primary" style="padding: 12px 30px;">
+                Ir al Menú
+            </a>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

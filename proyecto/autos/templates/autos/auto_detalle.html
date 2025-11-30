@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %} 
+
+{% block title %}{{ auto.marca }} {{ auto.modelo }} - Vukimotors{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'autos/css/auto_detalles.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO BANNER -->
+<header class="detail-hero" style="background-image: url('{{ auto.imagen_auto.url }}');">
+    <div class="hero-overlay">
+        <div class="container">
+            <nav class="breadcrumbs">
+                <a href="{% url 'menu' %}">Autos</a> &gt;
+                <span>{{ auto.marca }} {{ auto.modelo }}</span>
+            </nav>
+            <h1 class="hero-title">{{ auto.marca }} {{ auto.modelo }}</h1>
+            <h2 class="hero-subtitle">{{ auto.version|default:'' }} | {{ auto.anio }}</h2>
+        </div>
+    </div>
+</header>
+
+<div class="container detail-content">
+    
+    <div class="detail-main">
+        
+        <!-- ESPECIFICACIONES -->
+        <section class="detail-card">
+            <h3>Especificaciones</h3>
+            <ul class="spec-list">
+                <li>
+                    <span>Marca</span>
+                    <strong>{{ auto.marca }}</strong>
+                </li>
+                <li>
+                    <span>Modelo</span>
+                    <strong>{{ auto.modelo }}</strong>
+                </li>
+                <li>
+                    <span>Año</span>
+                    <strong>{{ auto.anio }}</strong>
+                </li>
+                <li>
+                    <span>Kilometraje</span>
+                    <strong>{{ auto.kilometraje|intcomma }} km</strong>
+                </li>
+                <li>
+                    <span>Estado</span>
+                    <strong>{{ auto.estado }}</strong>
+                </li>
+                <li>
+                    <span>Color</span>
+                    <strong>{{ auto.color|default:'No especificado' }}</strong>
+                </li>
+            </ul>
+        </section>
+
+        <!-- SECCIÓN DE RESEÑAS -->
+        <section class="detail-card">
+            <h3>Reseñas y Opiniones</h3>
+            
+            <!-- 
+               1. CAMBIO DE ORDEN: FORMULARIO PRIMERO
+               Ahora aparece arriba para invitar a comentar.
+            -->
+            <div class="review-form-container">
+                <h4>Deja tu opinión</h4>
+                
+                {% if user.is_authenticated %}
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="form-group">
+                            <label>Calificación:</label>
+                            <select name="puntuacion" required class="form-control" style="max-width: 200px;">
+                                <option value="5">★★★★★ - Excelente</option>
+                                <option value="4">★★★★☆ - Muy bueno</option>
+                                <option value="3">★★★☆☆ - Bueno</option>
+                                <option value="2">★★☆☆☆ - Regular</option>
+                                <option value="1">★☆☆☆☆ - Malo</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="comentario">Tu comentario:</label>
+                            <textarea name="comentario" id="comentario" class="form-control" placeholder="Cuéntanos qué te pareció este auto..." required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Publicar Reseña</button>
+                    </form>
+                {% else %}
+                    <div class="login-prompt">
+                        Para dejar una reseña, necesitas <a href="{% url 'login' %}">iniciar sesión</a>.
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- 
+               2. LISTADO DE RESEÑAS (ABAJO)
+               Agregamos un pequeño margen superior para separarlo del formulario.
+            -->
+            <div class="reviews-list" style="margin-top: 3rem;">
+                <h4 style="border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">Comentarios recientes</h4>
+
+                {% for resena in auto.resenas.all %}
+                    <div class="review-item">
+                        <div class="review-header">
+                            <strong class="review-author">{{ resena.usuario.nombre }}</strong>
+                            <div class="review-stars">
+                                {% if resena.puntuacion == 5 %}★★★★★{% endif %}
+                                {% if resena.puntuacion == 4 %}★★★★☆{% endif %}
+                                {% if resena.puntuacion == 3 %}★★★☆☆{% endif %}
+                                {% if resena.puntuacion == 2 %}★★☆☆☆{% endif %}
+                                {% if resena.puntuacion == 1 %}★☆☆☆☆{% endif %}
+                            </div>
+                        </div>
+                        <p class="review-text">{{ resena.comentario }}</p>
+                        <small class="review-date">{{ resena.fecha_resena|date:"d M Y" }}</small>
+                    </div>
+                {% empty %}
+                    <p class="no-reviews">Aún no hay comentarios. ¡Sé el primero en opinar!</p>
+                {% endfor %}
+            </div>
+
+        </section>
+
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="detail-sidebar">
+        
+        <div class="detail-card sticky-card">
+            <p class="detail-price">
+                ${{ auto.precio|floatformat:2|intcomma }}
+            </p>
+            
+            <hr class="sidebar-divider">
+
+            <h4>Vendido por:</h4>
+            <p class="vendedor-nombre">{{ auto.vendedor.nombre }}</p>
+            <p class="vendedor-tipo">{{ auto.vendedor.tipo }}</p>
+            
+            <a href="tel:{{ auto.vendedor.telefono }}" class="btn btn-primary btn-block" style="margin-bottom: 10px;">
+                Contactar Vendedor
+            </a>
+            <a href="mailto:{{ auto.vendedor.correo }}" class="btn btn-secondary btn-block">
+                Enviar Correo
+            </a>
+
+            <div style="margin-top: 1.5rem; border-top: 1px solid #eee; padding-top: 1rem;">
+                <a href="{% url 'toggle_favorito' auto.pk %}" class="btn btn-block" 
+                   style="background-color: white; border: 2px solid #ffc107; color: #b38600; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; transition: background 0.2s;">
+                    
+                    {% if auto.pk in request.session.favoritos_ids %}
+                        <span style="font-size: 1.2rem; color: #ffc107;">★</span> Quitar de Favoritos
+                    {% else %}
+                        <span style="font-size: 1.2rem; color: #ccc;">☆</span> Guardar como Favorito
+                    {% endif %}
+                </a>
+            </div>
+
+        </div>
+    </aside>
+
+</div>
+
+{% endblock %}
