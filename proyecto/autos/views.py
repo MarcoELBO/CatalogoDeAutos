@@ -53,7 +53,7 @@ class MenuView(ListView):
         elif orden == 'precio_desc':
             queryset = queryset.order_by('-precio')
         elif orden == 'ano_desc':
-            queryset = queryset.order_by('-ano')
+            queryset = queryset.order_by('-anio')
         else:
             queryset = queryset.order_by(*self.model._meta.ordering)
         
